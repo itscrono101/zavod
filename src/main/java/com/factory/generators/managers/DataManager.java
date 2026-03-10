@@ -46,7 +46,10 @@ public class DataManager {
 
             try {
                 String typeId = gen.getString("type");
-                UUID owner = UUID.fromString(gen.getString("owner"));
+                String ownerStr = gen.getString("owner");
+                UUID owner = (ownerStr == null || ownerStr.equals("0-0-0-0-0"))
+                        ? PlacedGenerator.NO_OWNER
+                        : UUID.fromString(ownerStr);
                 String[] parts = key.split(";");
 
                 PlacedGenerator generator = new PlacedGenerator(typeId, owner, parts[0],
@@ -83,7 +86,7 @@ public class DataManager {
             PlacedGenerator g = entry.getValue();
             String path = "generators." + entry.getKey();
             config.set(path + ".type", g.getTypeId());
-            config.set(path + ".owner", g.getOwnerUUID().toString());
+            config.set(path + ".owner", g.hasOwner() ? g.getOwnerUUID().toString() : "0-0-0-0-0");
             config.set(path + ".current-tick", g.getCurrentTick());
             config.set(path + ".total-generated", g.getTotalGenerated());
             config.set(path + ".broken", g.isBroken());

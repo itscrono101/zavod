@@ -75,6 +75,16 @@ public class MultiBlockManager {
             restoreStructure(structure);
         }
     }
+    /**
+     * Публичный метод восстановления блоков структуры.
+     * Используется при импорте данных — когда данные загружены из бэкапа,
+     * но физических блоков в мире ещё нет.
+     * Ставит блоки долота (незерит), трубы (медь) и станка (редстоун)
+     * на координаты из структуры.
+     */
+    public void restoreStructurePublic(MultiBlockStructure structure) {
+        restoreStructure(structure);
+    }
 
     private void restoreStructure(MultiBlockStructure structure) {
         boolean hasDrill = false;
@@ -150,7 +160,7 @@ public class MultiBlockManager {
         partToStructure.put(key, key);
 
         // Удаляем предыдущий блок перед установкой нового БЕЗ физики (чтобы не падал)
-        location.getBlock().setType(Material.AIR, false);
+
         location.getBlock().setType(DRILL_MATERIAL, false);
 
         location.getWorld().playSound(location, Sound.BLOCK_ANVIL_PLACE, 1f, 0.8f);
@@ -185,7 +195,7 @@ public class MultiBlockManager {
         partToStructure.put(pipeKey, drillKey);
 
         // Удаляем предыдущий блок перед установкой нового БЕЗ физики
-        location.getBlock().setType(Material.AIR, false);
+
         location.getBlock().setType(PIPE_MATERIAL, false);
         location.getWorld().playSound(location, Sound.BLOCK_COPPER_PLACE, 1f, 1f);
 
@@ -218,7 +228,7 @@ public class MultiBlockManager {
         partToStructure.put(pumpKey, drillKey);
 
         // Удаляем предыдущий блок перед установкой нового БЕЗ физики
-        location.getBlock().setType(Material.AIR, false);
+
         location.getBlock().setType(PUMP_MATERIAL, false);
 
         // ЗАВЕРШЕНО!
@@ -422,8 +432,18 @@ public class MultiBlockManager {
         ItemStack oil = new ItemStack(Material.INK_SAC, 1);
         ItemMeta meta = oil.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(color("&8&l⚫ &0Нефть"));
-            meta.setLore(Arrays.asList("", "&7Сырая нефть"));
+            // &8⛽ &f — серая иконка + белое название, хорошо видно в инвентаре
+            // Раньше было &0 (чёрный) — почти не видно на тёмном фоне
+            meta.setDisplayName(color("&8⛽ &fНефть"));
+
+            // Arrays.asList + color() для каждой строки — так уже сделано в createPartItem
+            // Без color() игрок видел бы "&7Сырая нефть" вместо серого текста
+            meta.setLore(Arrays.asList(
+                    color(""),
+                    color("&7Сырая нефть"),
+                    color("&8Из буровой вышки")
+            ));
+
             oil.setItemMeta(meta);
         }
 

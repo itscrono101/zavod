@@ -164,10 +164,16 @@ public class CasinoManager {
         ItemStack oil = new ItemStack(Material.INK_SAC, Math.min(amount, 64));
         ItemMeta meta = oil.getItemMeta();
         if (meta != null) {
-            meta.setDisplayName(colorize("&8&l⚫ &0Нефть"));
-            meta.setLore(new java.util.ArrayList<>(java.util.Collections.singletonList(
-                colorize("&7Сырая нефть из генератора")
+            // Тот же стиль что и в MultiBlockManager для единообразия
+            meta.setDisplayName(colorize("&8⛽ &fНефть"));
+
+            // colorize() — метод в CasinoManager, аналог color() в других классах
+            meta.setLore(new java.util.ArrayList<>(java.util.Arrays.asList(
+                    colorize(""),
+                    colorize("&7Сырая нефть"),
+                    colorize("&8Из буровой вышки")
             )));
+
             oil.setItemMeta(meta);
         }
         return oil;

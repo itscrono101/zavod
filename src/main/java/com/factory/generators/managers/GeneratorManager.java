@@ -72,7 +72,10 @@ public class GeneratorManager {
             return false;
         }
 
-        PlacedGenerator generator = new PlacedGenerator(typeId, player.getUniqueId(), location);
+        UUID initialOwner = type.isRepairRequired()
+                ? PlacedGenerator.NO_OWNER   // Рудник — владелец назначится при активации
+                : player.getUniqueId();       // Завод — владелец сразу тот кто поставил
+        PlacedGenerator generator = new PlacedGenerator(typeId, initialOwner, location);
         placedGenerators.put(generator.getLocationKey(), generator);
 
         // Update player index
@@ -102,10 +105,18 @@ public class GeneratorManager {
         if (generator == null) return false;
 
         if (plugin.getConfigManager().isOnlyOwnerCanBreak()) {
-            if (!generator.getOwnerUUID().equals(player.getUniqueId()) &&
-                !player.hasPermission(Constants.Permissions.BYPASS)) {
-                Logger.security("Access denied for " + player.getName() + ": attempted to break generator at " + location);
-                Utils.sendMessage(player, Constants.Messages.ERROR_PREFIX + "Только владелец может сломать!");
+            boolean isOwner = generator.getOwnerUUID().equals(player.getUniqueId());
+            boolean isAdmin = player.hasPermission(Constants.Permissions.BYPASS); // это factory.bypass = op
+            boolean noOwner = !generator.hasOwner(); // рудник ещё не активирован никем
+
+            if (!isOwner && !isAdmin) {
+                if (noOwner) {
+                    // Нет владельца — только ОП может забрать
+                    Utils.sendMessage(player, Constants.Messages.ERROR_PREFIX +
+                            "&cРудник ещё не активирован!");
+                } else {
+                    Utils.sendMessage(player, Constants.Messages.ERROR_PREFIX + "Только владелец может сломать!");
+                }
                 return false;
             }
         }

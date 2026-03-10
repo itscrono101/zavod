@@ -9,7 +9,7 @@ import java.util.UUID;
 public class PlacedGenerator {
 
     private final String typeId;
-    private final UUID ownerUUID;
+    private UUID ownerUUID;
     private final String worldName;
     private final int x, y, z;
     private int currentTick;
@@ -56,6 +56,8 @@ public class PlacedGenerator {
         return new Location(world, x, y, z);
     }
 
+    public static final UUID NO_OWNER = new UUID(0, 0);
+
     public String getLocationKey() {
         return worldName + ";" + x + ";" + y + ";" + z;
     }
@@ -80,6 +82,10 @@ public class PlacedGenerator {
 
     public int getRemainingTicks(int maxDelay) {
         return Math.max(0, maxDelay - currentTick);
+}
+
+    public boolean hasOwner() {
+        return ownerUUID != null && !ownerUUID.equals(NO_OWNER);
     }
 
     public String formatTime(int remainingTicks) {
@@ -95,6 +101,10 @@ public class PlacedGenerator {
     public int getX() { return x; }
     public int getY() { return y; }
     public int getZ() { return z; }
+
+    public void setOwnerUUID(UUID uuid) {
+        this.ownerUUID = uuid;
+    }
 
     public int getCurrentTick() { return currentTick; }
     public void setCurrentTick(int tick) { this.currentTick = tick; }

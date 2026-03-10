@@ -51,7 +51,10 @@ public class MineGUI implements Listener {
         // Заголовок - информация о рудника
         List<String> infoLore = new ArrayList<>();
         infoLore.add("");
-        infoLore.add("&7Владелец: &f" + Bukkit.getOfflinePlayer(generator.getOwnerUUID()).getName());
+        String ownerName = generator.hasOwner()
+                ? Bukkit.getOfflinePlayer(generator.getOwnerUUID()).getName()
+                : "&7Нет владельца";
+        infoLore.add("&7Владелец: &f" + ownerName);
         infoLore.add("&7Статус: " + (isMineFull() ? "&aАКТИВЕН" : "&cТребуется пополнение"));
         infoLore.add("");
         infoLore.add("&7Для активации нужны ресурсы:");
@@ -183,6 +186,10 @@ public class MineGUI implements Listener {
             removeResourcesFromPlayer();
             generator.setMineHealth(100); // Устанавливаем полное здоровье
             generator.setBroken(false);
+            if (!generator.hasOwner()) {
+                generator.setOwnerUUID(clicker.getUniqueId());
+                clicker.sendMessage(color("&6[Рудник] &fВы стали владельцем этого рудника!"));
+            }
 
             clicker.sendMessage(color("&a[Рудник] Рудник активирован! Начинает производить ресурсы!"));
             clicker.playSound(clicker.getLocation(), Sound.BLOCK_ANVIL_USE, 1f, 1f);

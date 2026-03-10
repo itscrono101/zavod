@@ -10,6 +10,8 @@ import org.bukkit.entity.EntityType;
 
 import java.util.*;
 
+
+
 public class HologramManager {
 
     private final IronFactory plugin;
@@ -164,15 +166,30 @@ public class HologramManager {
     }
 
     private String parseLine(String line, PlacedGenerator generator, GeneratorType type) {
+        // Определяем статус рудника
+        String statusText;
         if (generator.isBroken()) {
-            if (line.contains("%time%")) {
-                return "&c⚠ СЛОМАН";
-            }
+            statusText = "&c[СЛОМАН]";
+        } else if (type.isRepairRequired() && generator.getMineHealth() < type.getMaxHealth()) {
+            statusText = "&c[ТРЕБУЕТ АКТИВАЦИИ]";
+        } else if (type.isRepairRequired() && generator.getMineHealth() >= type.getMaxHealth()) {
+            statusText = "&a[АКТИВЕН]";
+        } else {
+            statusText = "";
         }
+
+        // Если сломан — строку с таймером тоже заменяем
+        if (generator.isBroken() && line.contains("%time%")) {
+            return "&c⚠ СЛОМАН";
+        }
+
         int remaining = generator.getRemainingTicks(type.getDelay());
-        return line.replace("%time%", generator.formatTime(remaining))
+
+        return line
+                .replace("%time%", generator.formatTime(remaining))
                 .replace("%total%", String.valueOf(generator.getTotalGenerated()))
-                .replace("%type%", type.getName());
+                .replace("%type%", type.getName())
+                .replace("%status%", statusText);
     }
 
     private String parseMultiLine(String line, MultiBlockStructure structure, int delay) {

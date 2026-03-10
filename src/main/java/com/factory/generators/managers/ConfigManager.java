@@ -156,7 +156,7 @@ public class ConfigManager {
         if (breakSection != null) {
             type.setCanBreak(breakSection.getBoolean("enabled", false));
             type.setBreakChance(breakSection.getDouble("chance", 5.0));
-            type.setBrokenName(breakSection.getString("broken-name", "&c[СЛОМАН] " + type.getName()));
+            type.setBrokenName(breakSection.getString("broken-name", "%status% " + type.getName()));
             type.setBrokenLore(breakSection.getStringList("broken-lore"));
 
             ConfigurationSection repair = breakSection.getConfigurationSection("repair");
@@ -239,14 +239,14 @@ public class ConfigManager {
 
         // Рудник LVL 1 (изначально сломан, требует ремонта)
         config.set("mine_lvl1.generator-item.material", "DEEPSLATE_ORE");
-        config.set("mine_lvl1.generator-item.name", "&8⛏ Рудник &7(LVL 1) &c[СЛОМАН]");
+        config.set("mine_lvl1.generator-item.name", "&8⛏ Рудник &7(LVL 1)");
         config.set("mine_lvl1.generator-item.lore", Arrays.asList("", "&7Производит железную руду", "&c⚠ ТРЕБУЕТ РЕМОНТА!", "&7Стоимость ремонта: 20 железных слитков", "&7Время: 4 мин"));
         config.set("mine_lvl1.block", "DEEPSLATE_ORE");
         config.set("mine_lvl1.delay", 4800);
         config.set("mine_lvl1.generates", Arrays.asList(Map.of("item", "IRON_ORE", "amount", 1, "chance", 100.0)));
         config.set("mine_lvl1.hologram.enabled", true);
         config.set("mine_lvl1.hologram.height", 1.5);
-        config.set("mine_lvl1.hologram.lines", Arrays.asList("&8⛏ Рудник &7[1]", "&a%time%", "&c[СЛОМАН]"));
+        config.set("mine_lvl1.hologram.lines", Arrays.asList("&8⛏ Рудник &7[1]", "&a%time%", "%status%"));
 
         // Система ремонта для рудника
         config.set("mine_lvl1.repair.enabled", true);
@@ -261,7 +261,7 @@ public class ConfigManager {
 
         // Рудник LVL 2
         config.set("mine_lvl2.generator-item.material", "DEEPSLATE_IRON_ORE");
-        config.set("mine_lvl2.generator-item.name", "&8⛏ Рудник &e(LVL 2) &c[СЛОМАН]");
+        config.set("mine_lvl2.generator-item.name", "&8⛏ Рудник &e(LVL 2)");
         config.set("mine_lvl2.generator-item.lore", Arrays.asList("", "&7Производит железную руду x2 + медную", "&c⚠ ТРЕБУЕТ РЕМОНТА!", "&7Стоимость ремонта: 30 железных слитков"));
         config.set("mine_lvl2.block", "DEEPSLATE_IRON_ORE");
         config.set("mine_lvl2.delay", 4000);
@@ -271,7 +271,7 @@ public class ConfigManager {
         ));
         config.set("mine_lvl2.hologram.enabled", true);
         config.set("mine_lvl2.hologram.height", 1.5);
-        config.set("mine_lvl2.hologram.lines", Arrays.asList("&eРудник &7[2]", "&a%time%", "&c[СЛОМАН]"));
+        config.set("mine_lvl2.hologram.lines", Arrays.asList("&eРудник &7[2]", "&a%time%", "%status%"));
 
         config.set("mine_lvl2.repair.enabled", true);
         config.set("mine_lvl2.repair.max-health", 100);
@@ -285,7 +285,7 @@ public class ConfigManager {
 
         // Рудник LVL 3 (премиум)
         config.set("mine_lvl3.generator-item.material", "DEEPSLATE_GOLD_ORE");
-        config.set("mine_lvl3.generator-item.name", "&8⛏ Рудник &6(LVL 3) &c[СЛОМАН]");
+        config.set("mine_lvl3.generator-item.name", "&8⛏ Рудник &6(LVL 3)");
         config.set("mine_lvl3.generator-item.lore", Arrays.asList("", "&7Производит руды &7+ &6Золото!", "&c⚠ ТРЕБУЕТ РЕМОНТА!", "&7Стоимость ремонта: 40 железных слитков"));
         config.set("mine_lvl3.block", "DEEPSLATE_GOLD_ORE");
         config.set("mine_lvl3.delay", 3600);
@@ -296,7 +296,7 @@ public class ConfigManager {
         ));
         config.set("mine_lvl3.hologram.enabled", true);
         config.set("mine_lvl3.hologram.height", 1.5);
-        config.set("mine_lvl3.hologram.lines", Arrays.asList("&6Рудник &7[3]", "&a%time%", "&c[СЛОМАН]"));
+        config.set("mine_lvl3.hologram.lines", Arrays.asList("&6Рудник &7[3]", "&a%time%", "%status%"));
 
         config.set("mine_lvl3.repair.enabled", true);
         config.set("mine_lvl3.repair.max-health", 100);

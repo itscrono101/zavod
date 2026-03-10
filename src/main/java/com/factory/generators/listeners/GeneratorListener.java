@@ -7,8 +7,12 @@ import com.factory.generators.gui.RepairGUI;
 import com.factory.generators.models.GeneratorType;
 import com.factory.generators.models.MultiBlockStructure;
 import com.factory.generators.models.PlacedGenerator;
+import org.bukkit.Bukkit;           // ← ДОБАВЛЕНО: нужен для Bukkit.getScheduler()
+import org.bukkit.Location;         // ← ДОБАВЛЕНО: нужен для block.getLocation().clone()
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;  // ← ДОБАВЛЕНО: нужен для applyFacingToBlock
+import org.bukkit.block.data.Directional; // ← ДОБАВЛЕНО: нужен для applyFacingToBlock
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -34,22 +38,34 @@ public class GeneratorListener implements Listener {
         ItemStack item = event.getItemInHand();
         Block block = event.getBlockPlaced();
 
-        // Часть буровой?
+
+// Часть буровой?
         String partType = plugin.getMultiBlockManager().getPartTypeFromItem(item);
         if (partType != null) {
+            // Отменяем стандартную установку блока Minecraft — мы сами управляем блоком
             event.setCancelled(true);
 
-            boolean success = plugin.getMultiBlockManager().placePart(player, block.getLocation(), partType);
+            // Сохраняем переменные для использования внутри лямбды (они должны быть final/effectively final)
+            final String finalPartType = partType;
+            final Location placedLocation = block.getLocation().clone(); // клонируем чтобы не изменился
 
-            if (!success) {
-                block.setType(Material.AIR);
-            } else {
-                if (item.getAmount() > 1) {
-                    item.setAmount(item.getAmount() - 1);
-                } else {
-                    player.getInventory().setItemInMainHand(null);
+            // ВАЖНО: запускаем через scheduler с задержкой 1 тик!
+            // Проблема была в том что event.setCancelled(true) откатывает блок ПОСЛЕ нашего кода.
+            // Если мы ставим setType(DRILL_MATERIAL) прямо здесь — Minecraft потом ставит AIR поверх.
+            // Задержка 1 тик гарантирует что откат Minecraft уже произошёл, и только потом мы ставим блок.
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                boolean success = plugin.getMultiBlockManager().placePart(player, placedLocation, finalPartType);
+
+                if (success) {
+                    // Забираем предмет из инвентаря только при успехе
+                    if (item.getAmount() > 1) {
+                        item.setAmount(item.getAmount() - 1);
+                    } else {
+                        player.getInventory().setItemInMainHand(null);
+                    }
                 }
-            }
+                // При неуспехе блок уже AIR (Minecraft откатил), ничего делать не надо
+            });
             return;
         }
 
@@ -64,6 +80,11 @@ public class GeneratorListener implements Listener {
         }
 
         block.setType(type.getBlockMaterial());
+
+        // Если блок генератора имеет направление (например Печь, Дымовая печь,
+        // Доменная печь и т.д.) — поворачиваем его "лицом" к игроку который ставит.
+        // Без этого печка всегда смотрит на север независимо от игрока.
+        applyFacingToBlock(block, player);
 
         boolean success = plugin.getGeneratorManager().placeGenerator(player, block.getLocation(), generatorId);
 
@@ -171,7 +192,35 @@ public class GeneratorListener implements Listener {
 
         new GeneratorGUI(plugin, player, generator, type).open();
     }
+    /**
+     * Поворачивает блок "лицом" к игроку если блок поддерживает направление.
+     * Нужно для блоков типа Печь (FURNACE), Доменная печь (BLAST_FURNACE),
+     * Дымовая печь (SMOKER) и других directional блоков.
+     *
+     * Minecraft хранит направление блока в его BlockData через интерфейс Directional.
+     * getFacing() у игрока возвращает куда он СМОТРИТ, а нам нужна ОБРАТНАЯ сторона —
+     * чтобы "лицо" печки смотрело НА игрока, а не вместе с ним в одну сторону.
+     */
+    private void applyFacingToBlock(Block block, Player player) {
+        // Проверяем что BlockData этого блока поддерживает направление
+        // Не все блоки это поддерживают — камень, руда и т.д. не имеют facing
+        if (block.getBlockData() instanceof org.bukkit.block.data.Directional) {
+            org.bukkit.block.data.Directional directional =
+                    (org.bukkit.block.data.Directional) block.getBlockData();
 
+            // getCardinalDirection() возвращает куда смотрит игрок: NORTH, SOUTH, EAST, WEST
+            // Нам нужно OPPOSITE (противоположное) — чтобы печка смотрела НА игрока
+            org.bukkit.block.BlockFace playerFacing =
+                    player.getFacing().getOppositeFace();
+
+            // Проверяем что это направление допустимо для данного блока
+            // (некоторые блоки поддерживают только горизонтальные стороны)
+            if (directional.getFaces().contains(playerFacing)) {
+                directional.setFacing(playerFacing);
+                block.setBlockData(directional); // применяем обратно к блоку
+            }
+        }
+    }
     private String color(String text) {
         return text.replace("&", "§");
     }
