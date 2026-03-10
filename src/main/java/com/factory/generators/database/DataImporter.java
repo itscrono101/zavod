@@ -1,9 +1,12 @@
 package com.factory.generators.database;
 
+
 import com.factory.generators.IronFactory;
+import com.factory.generators.models.GeneratorType;
 import com.factory.generators.models.MultiBlockStructure;
 import com.factory.generators.models.PlacedGenerator;
 import com.factory.generators.utils.Logger;
+import org.bukkit.Material;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -109,7 +112,23 @@ public class DataImporter {
                 try {
                     PlacedGenerator generator = loadGeneratorFromSection(key, gen);
                     if (generator != null) {
+                        // Сохраняем генератор в память (Map)
                         plugin.getGeneratorManager().getPlacedGenerators().put(key, generator);
+
+                        // ВАЖНО: восстанавливаем физический блок в мире!
+                        // При импорте мир может быть "чистым" — данные есть, но блока нет.
+                        // Без этой строки будет HUD в воздухе и пустое место.
+                        Location loc = generator.getLocation();
+                        GeneratorType type = plugin.getConfigManager().getGeneratorType(generator.getTypeId());
+
+                        if (loc != null && loc.getWorld() != null && type != null) {
+                            // Ставим блок нужного типа (FURNACE для завода, DEEPSLATE_ORE для рудника и т.д.)
+                            loc.getBlock().setType(type.getBlockMaterial());
+
+                            // Создаём голограмму над блоком
+                            plugin.getHologramManager().createHologram(generator, type);
+                        }
+
                         count++;
                     }
                 } catch (Exception e) {
@@ -199,7 +218,14 @@ public class DataImporter {
                 try {
                     MultiBlockStructure structure = loadStructureFromSection(key, struct);
                     if (structure != null) {
+                        // Сохраняем структуру в память
                         plugin.getMultiBlockManager().registerLoadedStructure(structure);
+
+                        // ВАЖНО: восстанавливаем физические блоки буровой в мире!
+                        // registerLoadedStructure только регистрирует данные, но не ставит блоки.
+                        // restoreStructure ставит нужные блоки (незерит, медь, редстоун) на нужные координаты.
+                        plugin.getMultiBlockManager().restoreStructurePublic(structure);
+
                         count++;
                     }
                 } catch (Exception e) {
@@ -276,6 +302,9 @@ public class DataImporter {
             generator.setTotalGenerated(section.getLong("total-generated", 0));
             generator.setBroken(section.getBoolean("broken", false));
             generator.setUpgradeLevel(section.getInt("upgrade-level", 0));
+            // Восстанавливаем здоровье рудника — без этого рудник после импорта
+// будет показывать "требует активации" даже если был активирован
+            generator.setMineHealth(section.getInt("mine-health", 0));
 
             return generator;
         } catch (Exception e) {
