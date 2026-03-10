@@ -1,0 +1,154 @@
+# IronFactory Plugin - Messages Configuration
+# This file contains all player-facing messages and can be customized
+
+# Prefix colors
+prefix:
+  info: "&6[Завод]&r "
+  success: "&a[Завод]&r "
+  error: "&c[Завод]&r "
+  warning: "&e[Завод]&r "
+
+# Generator messages
+generator:
+  placed: "Генератор установлен!"
+  removed: "Генератор удалён."
+  upgraded: "Генератор успешно улучшен!"
+  break_failed: "Только владелец может сломать!"
+  limit_reached: "Лимит генераторов!"
+  not_found: "Генератор не найден: %s"
+  broken: "Ваш генератор сломался! Координаты: %x%, %y%, %z%"
+  max_level: "Максимальный уровень!"
+  insufficient_materials: "Недостаточно материалов!"
+  no_generator_found: "Смотрите на генератор!"
+  trigger_success: "Генератор сработает!"
+
+# Command messages
+command:
+  no_permission: "Недостаточно прав!"
+  invalid_args: "Неверные аргументы!"
+  player_not_found: "Игрок не найден!"
+  invalid_amount: "Неверное количество!"
+  invalid_number: "Неверное число!"
+  only_players: "Только для игроков!"
+  reload_success: "Перезагружено!"
+  reload_error: "Ошибка при перезагрузке!"
+  delay_changed: "Задержка: %s% сек"
+
+# Upgrade messages
+upgrade:
+  level_success: "Уровень: %level%"
+  success_title: "&a&lУСПЕХ!"
+  success_subtitle: "&eУлучшено!"
+  disabled: "Апгрейды для этого генератора недоступны!"
+  max_level: "Максимальный уровень апгрейда!"
+  load_error: "Ошибка при загрузке уровня апгрейда!"
+
+# Drill messages
+drill:
+  given: "Выдано %part% x%amount%"
+  invalid_part: "Части: drill, pipe, pump"
+  parts:
+    drill: "Долото"
+    pipe: "Труба"
+    pump: "Станок"
+  error: "Ошибка при создании детали буровой!"
+
+# Admin messages
+admin:
+  structures_header: "=== БУРОВЫЕ ВЫШКИ ==="
+  structures_total: "Всего структур: %count%"
+  structures_empty: "Нет буровых вышек"
+  structure_status: "Статус: %status%"
+  structure_complete: "&a✔ РАБОТАЕТ"
+  structure_incomplete: "&c✗ НЕ ЗАВЕРШЕНА"
+  debug_header: "=== ДЕБАГ ==="
+  debug_info: "Генераторов: %count%"
+  debug_drills: "Буровых: %count%"
+
+# Info messages
+info:
+  header: "-----------  &6⚙ IronFactory &8&m-----------"
+  version: "Версия: %version%"
+  generators_count: "Генераторов: %count%"
+  drills_count: "Буровых: %count%"
+
+# List messages
+list:
+  header: "-----------  &6Генераторы &8&m-----------"
+  entry: "- &e%id% &7(%material%)"
+  total: "Всего: %count%"
+
+# Help messages
+help:
+  header: "-----------  &6⚙ IronFactory &8&m-----------"
+  give: "/factory give <ник> <генератор> [кол-во]"
+  drill: "/factory drill <ник> <drill/pipe/pump> [кол-во]"
+  drilldebug: "/factory drilldebug &7- Дебаг буровых"
+  list: "/factory list &7- Список генераторов"
+  reload: "/factory reload &7- Перезагрузка"
+  footer: "------------------------------------"
+
+# Error messages
+error:
+  invalid_location: "Неверная координата!"
+  player_offline: "Игрок offline!"
+  config_error: "Ошибка конфигурации!"
+  data_error: "Ошибка сохранения данных!"
+  chunk_not_loaded: "Чанк не загружен!"
+
+# Log messages (for console)
+log:
+  plugin_loaded: "Плагин загружен! Генераторов: %count%"
+  plugin_disabled: "Плагин выключен!"
+  generators_loaded: "Загружено генераторов: %count%"
+  data_saved: "Данные сохранены!"
+  error_loading_config: "Ошибка загрузки конфигурации!"
+  error_loading_generator: "Ошибка загрузки генератора: %id%"
+
+# Casino messages
+casino:
+  prefix: "&6[Казино]&r "
+  not_enabled: "Казино отключено на сервере!"
+  not_enough_oil: "Недостаточно нефти! Нужно: %amount%"
+  bet_selected: "Ставка выбрана: &e%amount% нефти"
+  color_selected: "Выбрано: %choice%"
+  choice_selected: "Выбрано: %choice%"
+  insufficient_oil: "Недостаточно нефти!"
+  wait_before_next_game: "Подожди перед следующей попыткой!"
+  select_bet_first: "Сначала выбери ставку!"
+  spinning: "Крутим барабаны..."
+
+  slot_machine:
+    title: "&6&lСлот-машина"
+    spinning: "&eКрутим барабаны..."
+    select_choice: "Выбери ставку!"
+    jackpot: "&a&l✔ ДЖЕКПОТ! Выиграл &e%amount% &aнефти!"
+    draw: "&7Ничья! Возврат ставки: &e%amount% нефти"
+    loss: "&cПроигрыш! Ставка потеряна."
+
+  roulette:
+    title: "&c&lРулетка"
+    spinning: "&eКручу рулетку..."
+    select_color: "Сначала выбери цвет!"
+    red_wins: "&a&l✔ Выпало &cКРАСНОЕ&a! Выигрыш: &e%amount% &aнефти!"
+    black_wins: "&a&l✔ Выпало &8ЧЕРНОЕ&a! Выигрыш: &e%amount% &aнефти!"
+    loss: "&cВыпало %result%. Ставка потеряна."
+
+  high_low:
+    title: "&e&lВысокое/Низкое"
+    spinning: "&eГенерирую число..."
+    select_choice: "Сначала выбери: Высокое или Низкое!"
+    high_wins: "&a&l✔ Выпало &aВысокое число %number%! Выигрыш: &e%amount% &aнефти!"
+    low_wins: "&a&l✔ Выпало &cНизкое число %number%! Выигрыш: &e%amount% &aнефти!"
+    draw: "&7Ничья! Число 50. Ставка возвращена."
+    loss: "&cЧисло %number% не совпадает. Ставка потеряна."
+
+  commands:
+    casino_created: "Казино блок создан в: %x%, %y%, %z%"
+    casino_removed: "Казино блок удален!"
+    casino_already_exists: "На этом месте уже есть казино блок!"
+    not_casino_block: "Это не казино блок!"
+    no_block_in_sight: "Не вижу блок перед тобой!"
+    no_casinos: "Казино блоков не найдено"
+    casinos_list: "Казино Блоки"
+    casinos_total: "Всего: &e%count% казино блоков"
